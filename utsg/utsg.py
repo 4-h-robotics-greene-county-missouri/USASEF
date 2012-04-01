@@ -23,7 +23,7 @@ class Redirector:
     def __init__(self, serial_instance, socket, destination, ser_newline=None, net_newline=None, spy=False):
         self.serial = serial_instance
         self.socket = socket
-	self.destination = destination
+        self.destination = destination
         self.ser_newline = ser_newline
         self.net_newline = net_newline
         self.spy = spy
@@ -39,29 +39,36 @@ class Redirector:
         self.thread_read.start()
         self.writer()
 
+    def spyout(self, label, data):
+        sys.stdout.write('[%s]%s\n' % (label, repr(data)))
+        sys.stdout.flush()
+
     def reader(self):
         """loop forever and copy serial->socket"""
+        data='' # start with an empty buffer
         while self.alive:
             try:
-                data = self.serial.read(1)              # read one, blocking
+                chunk = self.serial.read(1)              # read one, blocking
                 n = self.serial.inWaiting()             # look if there is more
                 if n:
-                    data = data + self.serial.read(n)   # and get as much as possible
-                if data:
+                    chunk = chunk + self.serial.read(n)   # and get as much as possible
+                if chunk:
                     # the spy shows what's on the serial port, so log it before converting newlines
                     if self.spy:
-                        sys.stdout.write(codecs.escape_encode(data)[0])
-                        sys.stdout.flush()
+                        self.spyout('--SER->', chunk)
                     if self.ser_newline and self.net_newline:
                         # do the newline conversion
                         # XXX fails for CR+LF in input when it is cut in half at the begin or end of the string
-                        data = net_newline.join(data.split(ser_newline))
-                    # escape outgoing data when needed (Telnet IAC (0xff) character)
-                    self._write_lock.acquire()
-                    try:
-                        self.socket.sendto(data, self.destination)           # send it over UDP
-                    finally:
-                        self._write_lock.release()
+                        chunk = self.net_newline.join(chunk.split(self.ser_newline))
+                        delim = self.net_newline[-1]
+                    else:
+                        delim = '\n'
+                    data += chunk
+                    
+                    packets = data.split(delim)
+                    data = packets.pop(-1)
+                    map(self.write, packets)
+                    
             except socket.error, msg:
                 sys.stderr.write('ERROR: %s\n' % msg)
                 # probably got disconnected
@@ -69,10 +76,12 @@ class Redirector:
         self.alive = False
 
     def write(self, data):
-        """thread safe socket write with no data escaping. used to send telnet stuff"""
+        """thread safe socket write with no data escaping. used to send UDP packets"""
+        if self.spy:
+            self.spyout('<-UDP--', data)
         self._write_lock.acquire()
         try:
-            self.socket.sendall(data)
+            self.socket.sendto(data, self.destination)
         finally:
             self._write_lock.release()
 
@@ -83,6 +92,8 @@ class Redirector:
                 data,address = self.socket.recvfrom(1024)
                 if not data:
                     break
+                if self.spy:
+                    self.spyout('--UDP->', data)
                 if self.ser_newline and self.net_newline:
                     # do the newline conversion
                     # XXX fails for CR+LF in input when it is cut in half at the begin or end of the string
@@ -90,8 +101,7 @@ class Redirector:
                 self.serial.write(data)                 # get a bunch of bytes and send them
                 # the spy shows what's on the serial port, so log it after converting newlines
                 if self.spy:
-                    sys.stdout.write(codecs.escape_encode(data)[0])
-                    sys.stdout.flush()
+                    self.spyout('<-SER--', data)
             except socket.error, msg:
                 sys.stderr.write('ERROR: %s\n' % msg)
                 # probably got disconnected
@@ -197,18 +207,18 @@ Data transmitted by the serial device are sent to the destination host and port.
     )
     parser.add_option_group(group)
 
-    group.add_option("-P", "--localport",
-        dest = "local_port",
+    group.add_option("-P", "--recv_port",
+        dest = "recv_port",
         action = "store",
         type = 'int',
-        help = "local UDP port",
+        help = "local receive UDP port",
         default = 7777
     )
 
     group.add_option("-d", "--dest_host",
         dest = "dest_host",
         action = "store",
-        help = "destination hostname",
+        help = "destination hostname or '<broadcast>' default=127.0.0.1",
         default = '127.0.0.1'
     )
 
@@ -315,10 +325,10 @@ Data transmitted by the serial device are sent to the destination host and port.
         ser.setDTR(options.dtr_state)
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.bind( ('', options.local_port) )
+    sock.bind( ('', options.recv_port) )
     if options.dest_host == '<broadcast>':
       sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-    sys.stderr.write("Listening for UDP datagrams on %s...\n" % options.local_port)
+    sys.stderr.write("Listening for UDP datagrams on %s...\n" % options.recv_port)
     sys.stderr.write("Sending UDP datagrams to %s:%s...\n" % (options.dest_host, options.dest_port))
     while True:
         try:

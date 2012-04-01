@@ -1,0 +1,4 @@
+before: 6.20v
+after 5 min:5.95v
+after 10 min: 5.81v
+after 15 min: 5.73v
