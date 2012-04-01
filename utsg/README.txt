@@ -8,16 +8,15 @@ Gateway
 
 This program connects a serial port to a series of UDP datagrams.
 
-Data read from the serial port is buffered until a complete line is ready, and each line is transmitted as a UDP packet.
+Data read from the serial port may be buffered until a complete line is ready, and each line is transmitted as a UDP packet.
 
-Each UDP packet received is written to the serial port.
-
-Command line parameters are used to specifiy the details:
+Each UDP packet received is written to the serial port.  (See the section Newline Settings below for details)
 
 INSTALLATION:
 
-python setup.py --install
+python setup.py install
 or with the windows installer utsg-1.0.win32.exe
+
 
 
 Usage: python -m utsg [options] [port [baudrate]]
