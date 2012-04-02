@@ -5,10 +5,10 @@ port = raw_input()
 port = int(port)
 sender = rcpp.Sender(port)
 #This defines all of the variables' packet data. 
-go = "m+90+90\n"
-stop = "m+00+00\n"
-left = "m+90-90\n"
-right = "m-90+90\n"
+go = "m+90+90"
+stop = "m+00+00"
+left = "m+90-90"
+right = "m-90+90"
 varibledrive = 0
 com = 0
 #instuction printing.

@@ -1,0 +1,22 @@
+These distances are taken from the test robot running for 5 seconds.
+The first number is what is written to both continuous servos.
+
+1 = 4.5"
+2 = 9"
+3 = 13"
+4 = 17.5"
+5 = 22.5"
+6 = 26"
+7 = 30"
+8 = 32"
+9 = 34"
+10 = 34"
+15 = 37"
+20 = 37"
+30 = 37" 
+40 = 36.5"
+50 = 37"
+60 = 37"
+70 = 37"
+80 = 36.5"
+90 = 37"

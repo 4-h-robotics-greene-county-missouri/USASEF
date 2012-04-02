@@ -9,9 +9,8 @@
  */
 #include <Wire.h>
 #include <string.h>
-#define DELAY_COUNT 100 
-#define PRINTINTERVAL 1000  //the number of milliseconds between outputting the nunchuck state over the usb port
-#define DEADBAND 20         //A percentage away from center that is interpretted as still being zero
+#define DELAY_COUNT 50 
+#define PRINT_INTERVAL 1000  //the number of milliseconds between outputting the nunchuck state over the usb port        
 #undef int
 #include <stdio.h>
 
@@ -54,6 +53,12 @@ int nunchuckValues[] = {0,0,0,0,0,0,0,0,0,0}; //An array to store the nuncheck v
        <math>y = \frac{y_{raw} - y_0}{y_2 - y_0}</math>
        <math>z = \frac{z_{raw} - z_0}{z_1 - z_0}</math>
 */
+#define RAW_STICK_LOW 28
+#define RAW_STICK_HIGH 225
+#define DB_WIDTH 10
+
+
+
 
 /* Not all of these are used and could be deleted (kept to make interpretting math's
  * Easier 0-Zero G Value 1-Value when laying on table 2-Value when resting on nose
@@ -84,39 +89,49 @@ int nunchuckValues[] = {0,0,0,0,0,0,0,0,0,0}; //An array to store the nuncheck v
 #define LEFTSERVOPIN  10  
 #define RIGHTSERVOPIN  9
 
-#define MAXSPEED 90  //due to the way continuous rotation servos work maximum speed is reached at a much lower value than 90 (this value will change depending on your servos) (for Parallax servos)
+#define MAXSPEED 16
+//due to the way continuous rotation servos work maximum speed is reached at a much lower value than 90 (this value will change depending on your servos) (for Parallax servos)
 
 Servo leftServo; 
 Servo rightServo; 
 
-int leftSpeed = 0;  //sets the speed of the robot (left servos) 
+int leftSpeed = -1;  //sets the speed of the robot (left servos) 
                       //a percentage between -MAXSPEED and MAXSPEED
-int rightSpeed = 0;  //sets the speed of the robot (both servos) 
+int rightSpeed = -1;  //sets the speed of the robot (both servos) 
                       //a percentage between -MAXSPEED and MAXSPEED
 
 // END OF ARDUINO CONTROLLED SERVO ROBOT (SERB) PREAMBLE
 //--------------------------------------------------------------------------
 
-long lastPrint; //a long variable to store the time the wiimote state was last printed
+long nextPrint; //a long variable to store the time the wiimote state was last printed
 
 
 void setup(){
   Serial.begin(19200);     // Starts the serial port (used for debuging however makes servos jumpy)
   nunchuck_init ();       // Send the nunchuck initilization handshake
   readNunchuck();         // Reads the current state of the nunchucks buttons and accelerometers
-  lastPrint = millis();
+  nextPrint = millis();
 }
 
 
 void loop(){
   delay(DELAY_COUNT);
   readNunchuck();       //Reads the current state of the nunchucks buttons and accelerometers
+  moveWiiJoystick();
+  /*
   if(!getNunValue(ZBUTTON)){
     dbvalue = 50;
     moveWiiAcelerometer();            //moves the wii deoending on the nunchucks acceleration values 
   }else{
     dbvalue = 10;
     moveWiiJoystick();
+  }
+  */
+  if(millis() >= nextPrint)
+  {
+    nextPrint = millis() + PRINT_INTERVAL;
+    setSpeedLeft(leftSpeed);
+    setSpeedRight(rightSpeed);
   }
 }
 
@@ -125,39 +140,47 @@ void moveWiiAcelerometer(){
 }
 
 void moveWiiJoystick(){
- int xvalue = getNunValue(XSTICK);
- int yvalue = getNunValue(YSTICK); 
- 
- 
-/*
- Serial.print("\nx=");
- Serial.print(xvalue);
- Serial.print(" y=");
- Serial.println(yvalue);
-  */
-  
-  
- moveDifferential(map(yvalue,28,225,-1*MAXSPEED,MAXSPEED),map(xvalue,28,225,-1*MAXSPEED,MAXSPEED));
- }
+   int xvalue = deadBandFilter(getNunValue(XSTICK));
+   int yvalue = deadBandFilter(getNunValue(YSTICK)); 
+   moveDifferential(map(yvalue,RAW_STICK_LOW,RAW_STICK_HIGH,-1*MAXSPEED,MAXSPEED),map(xvalue,RAW_STICK_LOW,RAW_STICK_HIGH,-1*MAXSPEED,MAXSPEED));
+}
 
 //Takes in a speed and a direction input (like a joystick) and translates it to speed commands 
 void moveDifferential(int speed1, int direction1){
-  setSpeedLeft(speed1 + direction1);
-  setSpeedRight(speed1 - direction1);
-  
+  speed1 += 1;
+  direction1 += 1;
+  int lspeed = speed1 + direction1;
+  int rspeed = speed1 - direction1;
+
+  if(lspeed!=leftSpeed || rspeed!=rightSpeed)
+  {
+    setSpeedLeft(lspeed);
+    setSpeedRight(rspeed);
+  }
 }
 
+
+
 int deadBandFilter(int value){
-  
-  if (value > -dbvalue && value < dbvalue )
-   value = 0;
- if(value >= 90) {value = 90;}     
-  if(value <= -90) {value = -90;} 
+  int middle;
+  int db_low;
+  int db_high;
+  middle = RAW_STICK_LOW + (RAW_STICK_HIGH - RAW_STICK_LOW)/2;
+  db_low = middle -   DB_WIDTH /2;
+  db_high = middle + DB_WIDTH /2;
  
+  if (value > db_low && value < db_high)
+      value = middle;
+      
  return value; 
 }
 
-
+int rangeFilter(int value)
+   {
+    if(value >= MAXSPEED) {value = MAXSPEED;}    
+  if(value <= -MAXSPEED) {value = -MAXSPEED;}
+ return value;  
+   }
 //START OF NUNCHUCK ROUTINES
 //-------------------------------------------------------------------------------------------------------
 
@@ -264,21 +287,37 @@ if(newSpeed >= 100) {newSpeed = 100;}     //if speed is greater than 100
   rightSpeed = newSpeed * MAXSPEED / 100;   //scales the speed to be 
                                             //between -MAXSPEED and MAXSPEED
 */
-
-
-  rightSpeed=deadBandFilter (newSpeed);
-  if (rightSpeed == 0)
+  rightSpeed=newSpeed;
+  if (rightSpeed >= 0)
     {
-      Serial.println("+00"); 
+      if (rightSpeed < 10)
+        {
+          Serial.print("+0");
+          Serial.println(rightSpeed); 
+        }
+      else
+        {  
+          
+            
+          Serial.print("+");
+            
+          Serial.println(rightSpeed); 
+        }  
     }
   else
-    {  
-      if (rightSpeed > 0)
+    {
+     if (rightSpeed > -10)
         {
-          Serial.print("+");
+          Serial.print("-0");
+          Serial.println(-rightSpeed); 
         }
-      Serial.println(rightSpeed); 
-    }  
+      else
+        { 
+            
+          Serial.println(rightSpeed);
+        }     
+    }
+
 }
 
 
@@ -287,25 +326,41 @@ if(newSpeed >= 100) {newSpeed = 100;}     //if speed is greater than 100
  * NOTE: calls to this routine will take effect imediatly
 */ 
 void setSpeedLeft(int newSpeed){
-
-   
-
-
-
-  leftSpeed=deadBandFilter (newSpeed);
+  leftSpeed=newSpeed;
   Serial.print("m");
-  if (leftSpeed == 0)
+  if (leftSpeed >= 0)
     {
-      Serial.print("+00"); 
+      if (leftSpeed < 10)
+        {
+          Serial.print("+0");
+          Serial.print(leftSpeed); 
+        }
+      else
+        {  
+          
+            
+          Serial.print("+");
+            
+          Serial.print(leftSpeed); 
+        }  
     }
   else
-    {  
-      if (leftSpeed > 0)
+    {
+     if (leftSpeed > -10)
         {
-          Serial.print("+");
+          Serial.print("-0");
+          Serial.print(-leftSpeed); 
         }
-      Serial.print(leftSpeed); 
-    }  
+      else
+        {  
+          
+            
+          Serial.print("-");
+            
+          Serial.print(-leftSpeed);
+        }     
+    }
+
  }
 
 
