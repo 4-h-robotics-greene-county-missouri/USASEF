@@ -3,7 +3,6 @@
  *
  *  Explanation: This example shows how to get the signal from the Geiger Tube
  *  in Arduino, we use one of the Arduino interrupt pins (PIN2).
- *  We count the time (ms) between two pulses of the Geiger tube.
  *
  *  Copyright (C) 2011 Libelium Comunicaciones Distribuidas S.L.
  *  http://www.libelium.com
@@ -49,8 +48,8 @@ void setup(){
 
 void loop(){
   count = 0;
-  delay(5000);              // wait for five seconds
-  cpm = count*12;
+  delay(2500);              // wait for 2.5 seconds
+  cpm = count*24;
   Serial.print("Counts Per Minute = ");
   Serial.println(cpm);
   count = 0;

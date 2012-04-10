@@ -103,7 +103,7 @@ int rightSpeed = -1;  //sets the speed of the robot (both servos)
 // END OF ARDUINO CONTROLLED SERVO ROBOT (SERB) PREAMBLE
 //--------------------------------------------------------------------------
 
-long nextPrint; //a long variable to store the time the wiimote state was last printed
+long nextPrint; //a long variable to store the time the wiimote state will be printed next
 
 
 void setup(){
@@ -127,9 +127,9 @@ void loop(){
     moveWiiJoystick();
   }
   */
-  if(millis() >= nextPrint)
+  if(millis() >= nextPrint)         //If millis has caught up with nexPrint, a projected time. 
   {
-    nextPrint = millis() + PRINT_INTERVAL;
+    nextPrint = millis() + PRINT_INTERVAL;  // Makes nextPrint larger tham millis so the earlier if statement will fail for a PRINT_INTERVAL milliseconds.
     setSpeedLeft(leftSpeed);
     setSpeedRight(rightSpeed);
   }

@@ -9,6 +9,8 @@ go = "m+90+90"
 stop = "m+00+00"
 left = "m+90-90"
 right = "m-90+90"
+relay_on = "r1"
+relay_off = "r0"
 varibledrive = 0
 com = 0
 #instuction printing.
@@ -47,3 +49,9 @@ while True:
 		com = stop
 		sender.send(com)
 		break
+	elif kb == 'on':
+		com = relay_on
+		sender.send(com)
+	elif kb == 'off':
+		com = relay_off
+		sender.send(com)

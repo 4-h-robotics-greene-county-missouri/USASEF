@@ -1,0 +1,3 @@
+Data pins used for motors: 9, 10
+Data pins used for radiation board:2
+Data pins used for Xbee: rx, tx (0 and 1)
