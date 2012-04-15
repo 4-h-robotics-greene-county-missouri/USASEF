@@ -1,0 +1,50 @@
+' Gambas class file
+
+PUBLIC SUB RobotInterface_Read()
+
+  DIM packetType AS String
+  DIM FullMessage AS String
+  
+  READ #RobotInterface, FullMessage, Lof(RobotInterface)
+  
+  packetType = Left(FullMessage, 1)
+  
+  IF packetType = "#" THEN
+  
+  OutputBox.Text = FullMessage & Chr(13) & Chr(10) & OutputBox.Text 
+  ENDIF 
+  
+
+END
+PUBLIC SUB RobotInterface_Error()
+  
+  btnStart.Text = "Start !"
+  TextBox1.Enabled = TRUE
+  SELECT CASE RobotInterface.Status
+    CASE Net.CannotBindSocket
+      Message.Error(("Unable to Bind to that port"))
+    CASE Net.CannotCreateSocket
+      Message.Error(("System does not allow to create a socket"))
+    CASE Net.CannotRead
+      Message.Error(("Error Sending Data"))
+    CASE Net.CannotWrite
+      Message.Error(("Error Receiving Data"))
+  END SELECT
+  
+END
+PUBLIC SUB btnStart_Click()
+
+  IF RobotInterface.Status <= Net.Inactive THEN
+    RobotInterface.Bind(Val(TextBox1.Text))
+    IF RobotInterface.Status = Net.Active THEN
+      btnStart.Text = ("Stop")
+      TextBox1.Enabled = FALSE
+    END IF
+  ELSE
+    CLOSE #RobotInterface
+    btnStart.Text = ("Start !")
+    TextBox1.Enabled = TRUE
+  END IF    
+
+END
+

@@ -1,0 +1,9 @@
+# Gambas Project File 2.0
+Startup=TextReciever
+Icon=udpsocket.png
+Version=0.0.38
+Library=gb.qt
+Library=gb.net
+TabSize=2
+Translate=1
+ExecPath=/home/gunther/Desktop/udpTest/MessageReceiver.gambas

@@ -1,0 +1,30 @@
+# Gambas Form File 2.0
+
+{ Form Form
+  MoveScaled(0,0,64,46)
+  Text = ("")
+  { RobotInterface #UdpSocket
+    #X = 440
+    #Y = 280
+  }
+  { OutputBox TextArea
+    MoveScaled(2,6,60,27)
+    Text = ("")
+  }
+  { Label1 Label
+    MoveScaled(26,2,8,3)
+    Text = ("Messages")
+  }
+  { TextBox1 TextBox
+    MoveScaled(5,39,15,3)
+    Text = ("9001")
+  }
+  { btnStart Button
+    MoveScaled(21,39,6,3)
+    Text = ("Start")
+  }
+  { Label2 Label
+    MoveScaled(5,36,24,3)
+    Text = ("Port Configuration")
+  }
+}
