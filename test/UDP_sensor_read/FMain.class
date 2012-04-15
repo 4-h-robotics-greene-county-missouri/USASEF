@@ -1,0 +1,102 @@
+' Gambas class file
+
+PUBLIC SUB _new()
+
+END
+
+PUBLIC SUB Form_Open()
+
+btnStart_Click()
+
+END
+
+PUBLIC SUB messageOut(msg AS String)
+  
+  lstDataBox.Add(msg)
+  IF lstDataBox.Count > 10 THEN 
+    lstDataBox.Remove(0)
+  ENDIF
+   
+  
+END
+
+PUBLIC SUB sock_Read()
+
+  DIM packetType AS String
+  DIM FullMessage AS String
+  
+  READ #sock, FullMessage, Lof(sock)
+  
+  packetType = Left(FullMessage, 1)
+  
+  'IF packetType = "d" THEN
+     messageOut(FullMessage) 
+  'ENDIF 
+  
+
+END
+
+PUBLIC SUB sock_Error()
+  
+  btnStart.Text = "Start !"
+  portBox.Enabled = TRUE
+  SELECT CASE sock.Status
+    CASE Net.CannotBindSocket
+      Message.Error(("Unable to Bind to that port"))
+    CASE Net.CannotCreateSocket
+      Message.Error(("System does not allow to create a socket"))
+    CASE Net.CannotRead
+      Message.Error(("Error Sending Data"))
+    CASE Net.CannotWrite
+      Message.Error(("Error Receiving Data"))
+  END SELECT
+  
+END
+
+PUBLIC SUB btnStart_Click()
+
+  IF sock.Status <= Net.Inactive THEN
+    sock.Bind(Val(portBox.Text))
+    IF sock.Status = Net.Active THEN
+      btnStart.Text = ("Stop")
+      portBox.Enabled = FALSE
+    END IF
+  ELSE
+    CLOSE #sock
+    btnStart.Text = ("Start !")
+    portBox.Enabled = TRUE
+  END IF    
+
+END
+
+PUBLIC SUB UDPsend(Request AS String)
+  
+  sock.Broadcast = TRUE
+  sock.TargetPort = Val(txtDestPort.Text)
+  sock.TargetHost = txtDestHost.Text
+  WRITE #sock, Request, Len(Request)
+END
+
+PUBLIC SUB reqMBat_Click()
+
+  UDPsend("s0")
+
+END
+
+PUBLIC SUB reqABat_Click()
+
+    UDPsend("s1")
+
+END
+
+PUBLIC SUB reqUsense_Click()
+
+    UDPsend("s2")
+
+END
+
+PUBLIC SUB reqBSense_Click()
+
+    UDPsend("s3")
+
+END

@@ -1,0 +1,27 @@
+Motor message
+First char: a
+length: 7 bytes
+examples: m+00+00 , m-15+15
+---------------------------------
+Text message
+First char: #
+example: #Some text
+---------------------------------
+Motor enable
+First char: r
+Length: 2 bytes
+examples: r1 , r0
+---------------------------------
+Request sensor
+First char: s
+length: 2 bytes
+Sensor numbers: 
+	0 = servo battery
+	1 = arduino battery
+	2 = ultrasonic sensor 
+	3 = bump sensor
+examples: s1 , s3
+---------------------------------
+Sensor data
+First char: d
+examples: d1-5.96 , d2-1 , d0-8.79

@@ -1,0 +1,8 @@
+# Gambas Project File 2.0
+Title=Sensor Reader
+Startup=FMain
+Library=gb.net
+Library=gb.net.smtp
+Library=gb.qt
+Library=gb.qt.ext
+Library=gb.form

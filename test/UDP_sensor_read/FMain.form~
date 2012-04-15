@@ -1,0 +1,57 @@
+# Gambas Form File 2.0
+
+{ Form Form
+  MoveScaled(0,0,50,59)
+  Text = ("")
+  { sock #UdpSocket
+    #X = 352
+    #Y = 424
+  }
+  { reqMBat Button
+    MoveScaled(5,31,15,3)
+    Text = ("Motor Battery")
+  }
+  { reqBSense Button
+    MoveScaled(30,31,15,3)
+    Text = ("Bump Sensor")
+  }
+  { reqABat Button
+    MoveScaled(5,35,15,3)
+    Text = ("Arduino Battery")
+  }
+  { reqUsense Button
+    MoveScaled(30,35,15,3)
+    Text = ("Distance Sensor")
+  }
+  { lstDataBox ListBox
+    MoveScaled(3,3,44,26)
+  }
+  { btnStart Button
+    MoveScaled(29,45,6,3)
+    Text = ("start")
+  }
+  { portBox TextBox
+    MoveScaled(3,45,24,3)
+    Text = ("9001")
+  }
+  { Label1 Label
+    MoveScaled(3,42,24,3)
+    Text = ("Listen Port")
+  }
+  { txtDestHost TextBox
+    MoveScaled(3,52,24,3)
+    Text = ("<broadcast>")
+  }
+  { Label2 Label
+    MoveScaled(3,49,24,3)
+    Text = ("Destination Host")
+  }
+  { txtDestPort TextBox
+    MoveScaled(28,52,14,3)
+    Text = ("9000")
+  }
+  { Label3 Label
+    MoveScaled(28,49,24,3)
+    Text = ("Destination Port")
+  }
+}

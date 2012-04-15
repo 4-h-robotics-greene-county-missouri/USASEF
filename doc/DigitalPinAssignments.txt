@@ -1,3 +1,7 @@
 Data pins used for motors: 9, 10
-Data pins used for radiation board:2
+Data pins used for radiation board: 2
 Data pins used for Xbee: rx, tx (0 and 1)
+Data pins used for motor power relay: 4
+Data pins used for bump sensor: 3
+Analog pins used for ultrasonic sensor: A2
+Analog pins used for battery voltage sensors: A0, A1

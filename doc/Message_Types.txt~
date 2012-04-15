@@ -1,0 +1,13 @@
+Motor message
+First char: a
+length: 7 bytes
+examples: m+00+00 , m-15+15
+---------------------------------
+Text message
+First char: #
+examples: #Some text
+---------------------------------
+Motor enable
+First char: r
+Length: 2 bytes
+example: r1 , r0
