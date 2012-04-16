@@ -13,7 +13,7 @@ END
 PUBLIC SUB messageOut(msg AS String)
   
   lstDataBox.Add(msg)
-  IF lstDataBox.Count > 10 THEN 
+  IF lstDataBox.Count > 5 THEN 
     lstDataBox.Remove(0)
   ENDIF
    
@@ -24,15 +24,25 @@ PUBLIC SUB sock_Read()
 
   DIM packetType AS String
   DIM FullMessage AS String
+  DIM radCountStr AS String
+  DIM radCount AS Float
   
   READ #sock, FullMessage, Lof(sock)
   
   packetType = Left(FullMessage, 1)
   
-  'IF packetType = "d" THEN
-     messageOut(FullMessage) 
-  'ENDIF 
-  
+  IF packetType = "d" THEN
+     messageOut(FullMessage)
+     graphVolt(FullMessage) 
+  ELSE 
+    packetType = Left(FullMessage, 7)
+    IF packetType = "# Micro" THEN
+       messageOut(FullMessage)
+       radCountStr = Mid$(FullMessage, 27)
+       radCount = Val(radCountStr)
+       graphRad(radCount)
+    ENDIF 
+  ENDIF 
 
 END
 
@@ -73,8 +83,7 @@ PUBLIC SUB UDPsend(Request AS String)
   
   sock.Broadcast = TRUE
   sock.TargetPort = Val(txtDestPort.Text)
-  'sock.TargetHost = txtDestHost.Text
-  sock.TargetHost = "192.168.1.255"
+  sock.TargetHost = txtDestHost.Text
   WRITE #sock, Request, Len(Request)
 END
 
@@ -100,4 +109,44 @@ PUBLIC SUB reqBSense_Click()
 
     UDPsend("s3")
 
+END
+
+PUBLIC SUB Timer1_Timer()
+
+  UDPsend("s0")
+  UDPsend("s1")
+
+END
+
+PUBLIC SUB graphVolt(inputText AS String)
+  
+  DIM volt AS String
+  DIM id AS String
+  
+  DIM voltVal AS Float 
+  
+  id = Mid$(inputText, 2, 1)
+  volt = Mid$(inputText, 4)
+  
+  voltVal = Val(volt)
+  
+  IF id = "0" THEN 
+    LCDMotBat.Value = voltVal
+    voltVal = voltVal / 6.6
+    pbrMotorBat.Value = voltVal
+  ENDIF 
+  
+  IF id = "1" THEN 
+    LCDArdBat.Value = voltVal
+    voltVal = voltVal / 9.0
+    pbrArduinoBat.Value = voltVal 
+  ENDIF 
+  
+END 
+
+PUBLIC SUB graphRad(radValue AS Float)
+  
+  LCDuRPM.Value = radValue
+  DialuRPM.Value = radValue 
+  
 END

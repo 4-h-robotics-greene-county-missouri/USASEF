@@ -1,0 +1,19 @@
+# Gambas Form File 2.0
+
+{ Form Form
+  MoveScaled(0,0,50,50)
+  Text = ("")
+  { RobotInterface #UdpSocket
+    #X = 352
+    #Y = 352
+  }
+  { LCDuRPM LCDNumber
+    MoveScaled(20,28,12,6)
+  }
+  { DialuRPM Dial
+    MoveScaled(18,35,15,15)
+  }
+  { lstDataBox ListBox
+    MoveScaled(8,7,30,10)
+  }
+}

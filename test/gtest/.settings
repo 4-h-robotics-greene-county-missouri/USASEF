@@ -1,0 +1,10 @@
+[Breakpoints]
+Count=0
+
+[FFind]
+SearchIn="Module"
+CaseSensitive=False
+SearchWord=False
+SearchComment=False
+SearchString=True
+

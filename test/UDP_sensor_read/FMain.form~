@@ -1,7 +1,7 @@
 # Gambas Form File 2.0
 
 { Form Form
-  MoveScaled(0,0,50,59)
+  MoveScaled(0,0,79,59)
   Text = ("")
   { sock #UdpSocket
     #X = 352
@@ -21,10 +21,11 @@
   }
   { reqUsense Button
     MoveScaled(30,35,15,3)
+    Enabled = False
     Text = ("Distance Sensor")
   }
   { lstDataBox ListBox
-    MoveScaled(3,3,44,26)
+    MoveScaled(3,3,44,13)
   }
   { btnStart Button
     MoveScaled(29,45,6,3)
@@ -40,7 +41,7 @@
   }
   { txtDestHost TextBox
     MoveScaled(3,52,24,3)
-    Text = ("<broadcast>")
+    Text = ("255.255.255.255")
   }
   { Label2 Label
     MoveScaled(3,49,24,3)
@@ -53,5 +54,45 @@
   { Label3 Label
     MoveScaled(28,49,24,3)
     Text = ("Destination Port")
+  }
+  { Timer1 #Timer
+    #X = 352
+    #Y = 376
+    Enabled = True
+  }
+  { pbrArduinoBat ProgressBar
+    MoveScaled(7,20,36,3)
+  }
+  { pbrMotorBat ProgressBar
+    MoveScaled(7,27,36,3)
+  }
+  { Label4 Label
+    MoveScaled(7,24,24,3)
+    Text = ("Motor Battery")
+  }
+  { Label5 Label
+    MoveScaled(7,17,24,3)
+    Text = ("Arduino Battery")
+  }
+  { Label6 Label
+    MoveScaled(39,37,17,2)
+    Text = ("Not working")
+  }
+  { LCDMotBat LCDNumber
+    MoveScaled(35,24,8,3)
+  }
+  { LCDArdBat LCDNumber
+    MoveScaled(34,17,10,3)
+  }
+  { LCDuRPM LCDNumber
+    MoveScaled(53,25,24,12)
+  }
+  { DialuRPM Dial
+    MoveScaled(55,38,20,18)
+    MaxValue = 30
+  }
+  { Label7 Label
+    MoveScaled(57,19,19,6)
+    Text = ("Micro-rads Per Minute")
   }
 }
