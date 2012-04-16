@@ -34,18 +34,18 @@ msgstr ""
 msgid "Start !"
 msgstr ""
 
-#: TextReciever.class:78
+#: TextReciever.class:80
 msgid "Messages"
 msgstr ""
 
-#: TextReciever.class:83
+#: TextReciever.class:85
 msgid "9001"
 msgstr ""
 
-#: TextReciever.class:88
+#: TextReciever.class:90
 msgid "Start"
 msgstr ""
 
-#: TextReciever.class:93
+#: TextReciever.class:95
 msgid "Port Configuration"
 msgstr ""
