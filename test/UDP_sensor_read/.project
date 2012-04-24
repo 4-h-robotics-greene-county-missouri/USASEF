@@ -1,8 +1,11 @@
 # Gambas Project File 2.0
+# Compiled with Gambas 2.23.1
 Title=Sensor Reader
 Startup=FMain
+Version=0.0.2
+Library=gb.qt
+Library=gb.form
 Library=gb.net
 Library=gb.net.smtp
-Library=gb.qt
 Library=gb.qt.ext
-Library=gb.form
+TabSize=2

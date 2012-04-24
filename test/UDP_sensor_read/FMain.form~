@@ -4,8 +4,8 @@
   MoveScaled(0,0,79,59)
   Text = ("")
   { sock #UdpSocket
-    #X = 352
-    #Y = 424
+    #X = 495
+    #Y = 572
   }
   { reqMBat Button
     MoveScaled(5,31,15,3)
@@ -21,7 +21,6 @@
   }
   { reqUsense Button
     MoveScaled(30,35,15,3)
-    Enabled = False
     Text = ("Distance Sensor")
   }
   { lstDataBox ListBox
@@ -56,8 +55,8 @@
     Text = ("Destination Port")
   }
   { Timer1 #Timer
-    #X = 352
-    #Y = 376
+    #X = 495
+    #Y = 473
     Enabled = True
   }
   { pbrArduinoBat ProgressBar
@@ -74,10 +73,6 @@
     MoveScaled(7,17,24,3)
     Text = ("Arduino Battery")
   }
-  { Label6 Label
-    MoveScaled(39,37,17,2)
-    Text = ("Not working")
-  }
   { LCDMotBat LCDNumber
     MoveScaled(35,24,8,3)
   }
@@ -86,13 +81,27 @@
   }
   { LCDuRPM LCDNumber
     MoveScaled(53,25,24,12)
+    Style = LCDNumber.Filled
   }
   { DialuRPM Dial
     MoveScaled(55,38,20,18)
-    MaxValue = 30
+    MaxValue = 50
   }
   { Label7 Label
     MoveScaled(57,19,19,6)
     Text = ("Micro-rads Per Minute")
+  }
+  { chkbxBumper CheckBox
+    MoveScaled(58,3,24,3)
+    Enabled = False
+    Text = ("Bumper")
+  }
+  { Label6 Label
+    MoveScaled(53,9,24,3)
+    Text = ("Ultrasonic Sensor Distance")
+  }
+  { ultrasonicBox TextBox
+    MoveScaled(53,12,24,3)
+    Text = ("")
   }
 }

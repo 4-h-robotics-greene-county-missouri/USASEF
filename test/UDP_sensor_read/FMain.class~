@@ -41,6 +41,11 @@ PUBLIC SUB sock_Read()
        radCountStr = Mid$(FullMessage, 27)
        radCount = Val(radCountStr)
        graphRad(radCount)
+    ELSE 
+        packetType = Left(FullMessage, 1)
+        IF packetType = "#" THEN
+          messageOut(FullMessage)
+        ENDIF 
     ENDIF 
   ENDIF 
 
@@ -76,7 +81,7 @@ PUBLIC SUB btnStart_Click()
     btnStart.Text = ("Start !")
     portBox.Enabled = TRUE
   END IF    
-
+  
 END
 
 PUBLIC SUB UDPsend(Request AS String)
@@ -85,6 +90,7 @@ PUBLIC SUB UDPsend(Request AS String)
   sock.TargetPort = Val(txtDestPort.Text)
   sock.TargetHost = txtDestHost.Text
   WRITE #sock, Request, Len(Request)
+  
 END
 
 PUBLIC SUB reqMBat_Click()
@@ -115,6 +121,8 @@ PUBLIC SUB Timer1_Timer()
 
   UDPsend("s0")
   UDPsend("s1")
+  UDPsend("s2")
+  UDPsend("s3")
 
 END
 
@@ -142,11 +150,35 @@ PUBLIC SUB graphVolt(inputText AS String)
     pbrArduinoBat.Value = voltVal 
   ENDIF 
   
+  IF id = "2" THEN 
+  ultrasonicGraph(voltVal)
+  ENDIF 
+  
+  IF id = "2" THEN 
+  bumperGraph(voltVal)
+  ENDIF 
+  
 END 
 
 PUBLIC SUB graphRad(radValue AS Float)
   
   LCDuRPM.Value = radValue
-  DialuRPM.Value = radValue 
+  DialuRPM.Value = radValue * 10 
+  
+END
+
+PUBLIC SUB ultrasonicGraph(distance AS Float)
+  
+ultrasonicBox.Text = distance
+  
+END
+
+PUBLIC SUB bumperGraph(bumper AS Integer)
+  
+ IF bumper = 1 THEN 
+ chkbxBumper = FALSE
+ ELSE 
+ chkbxBumper = TRUE
+ ENDIF 
   
 END
